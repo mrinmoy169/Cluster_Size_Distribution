@@ -1,0 +1,76 @@
+<CompuCell3D>
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>5000</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+   </Metadata>
+   
+   <Potts>
+      <!-- Basic properties of CPM (GGH) algorithm -->
+  <Dimensions x="1000" y="1000" z="1"/>
+      <Steps>50010</Steps>
+      <FluctuationAmplitude>
+            <FluctuationAmplitudeParameters CellType="E" FluctuationAmplitude="1.0"/>
+            <FluctuationAmplitudeParameters CellType="EM" FluctuationAmplitude="1.0"/>
+            <FluctuationAmplitudeParameters CellType="M" FluctuationAmplitude="1.0"/>
+        </FluctuationAmplitude>
+<!--       <Temperature>1.0</Temperature> -->
+      <NeighborOrder>2</NeighborOrder>
+<!--       <LatticeType>Hexagonal</LatticeType> -->
+      <Boundary_x>Periodic</Boundary_x>
+      <Boundary_y>Periodic</Boundary_y>
+<!--       <Boundary_z>Periodic</Boundary_z> -->
+   </Potts>
+   
+   <Plugin Name="CellType">
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="E"/>
+      <CellType TypeId="2" TypeName="EM"/>
+      <CellType TypeId="3" TypeName="M"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+
+<!-- Uncomment this to include perimeter constraint -->
+<!--     <Plugin Name="Surface"/> -->
+
+<!-- This is to include active motility(mu) -->
+<Plugin Name="ExternalPotential">
+   <Algorithm>CenterOfMassBased</Algorithm>
+</Plugin>
+   
+   
+<Plugin Name="NeighborTracker"/>
+    
+   
+<!-- Ignore cell type M if there is only two type of cells E (Epethelial) and EM (Hybrid); we chage Medium-EM contact energy to vary Gamma -->
+<Plugin Name="Contact">
+   <Energy Type1="Medium" Type2="Medium">0.0</Energy>
+   <Energy Type1="Medium" Type2="E">20.0</Energy>
+   <Energy Type1="Medium" Type2="EM">6.0</Energy>
+   <Energy Type1="Medium" Type2="M">2.0</Energy>
+   <Energy Type1="E" Type2="E">2.0</Energy>
+   <Energy Type1="E" Type2="EM">6.0</Energy>
+   <Energy Type1="E" Type2="M">8.0</Energy>
+   <Energy Type1="EM" Type2="EM">6.0</Energy>
+   <Energy Type1="EM" Type2="M">8.0</Energy>
+   <Energy Type1="M" Type2="M">8.0</Energy>
+   <NeighborOrder>2</NeighborOrder>
+</Plugin>
+ 
+<Steppable Type="BlobInitializer">
+   
+   <Region>
+      <Center x="500" y="500" z="0"/>
+      <Radius>65</Radius>
+      <Gap>0</Gap>
+      <Width>5</Width>
+      <Types>E</Types>
+   </Region>
+</Steppable>
+
+</CompuCell3D>
+
